@@ -261,7 +261,7 @@
     <module>microbench</module>
     <module>all</module>
     <module>tarball</module>
-      <module>netty-demo</module>
+    <module>netty-demo</module>
   </modules>
 
   <dependencyManagement>
@@ -769,31 +769,31 @@
           </dependency>
         </dependencies>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>xml-maven-plugin</artifactId>
-        <version>1.0.1</version>
-        <executions>
-          <execution>
-            <id>check-style</id>
-            <goals>
-              <goal>check-format</goal>
-            </goals>
-            <phase>validate</phase>
-          </execution>
-        </executions>
-        <configuration>
-          <formatFileSets>
-            <formatFileSet>
-              <directory>${project.basedir}</directory>
-              <includes>
-                <include>**/pom.xml</include>
-              </includes>
-            </formatFileSet>
-          </formatFileSets>
-          <useDefaultFormatFileSet>false</useDefaultFormatFileSet>
-        </configuration>
-      </plugin>
+<!--      <plugin>-->
+<!--        <groupId>org.codehaus.mojo</groupId>-->
+<!--        <artifactId>xml-maven-plugin</artifactId>-->
+<!--        <version>1.0.1</version>-->
+<!--        <executions>-->
+<!--          <execution>-->
+<!--            <id>check-style</id>-->
+<!--            <goals>-->
+<!--              <goal>check-format</goal>-->
+<!--            </goals>-->
+<!--            <phase>validate</phase>-->
+<!--          </execution>-->
+<!--        </executions>-->
+<!--        <configuration>-->
+<!--          <formatFileSets>-->
+<!--            <formatFileSet>-->
+<!--              <directory>${project.basedir}</directory>-->
+<!--              <includes>-->
+<!--                <include>**/pom.xml</include>-->
+<!--              </includes>-->
+<!--            </formatFileSet>-->
+<!--          </formatFileSets>-->
+<!--          <useDefaultFormatFileSet>false</useDefaultFormatFileSet>-->
+<!--        </configuration>-->
+<!--      </plugin>-->
       <!-- Download the npn-boot.jar in advance to add it to the boot classpath. -->
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
