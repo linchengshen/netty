@@ -77,6 +77,7 @@ public abstract class MultithreadEventLoopGroup extends MultithreadEventExecutor
         return (EventLoop) super.next();
     }
 
+    // 子类去实现如何创建一个反应堆（事件循环)
     @Override
     protected abstract EventLoop newChild(Executor executor, Object... args) throws Exception;
 

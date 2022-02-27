@@ -22,6 +22,10 @@ public class NettyEchoServer {
         // 设置父通道类型
         serverBootstrap.channel(NioServerSocketChannel.class);
 
+        // 创建反应器组 --> 根据配置的数量 初始化对应的Reactor(eventLoop)
+        // 同一个反应组的事件循环共享同一个Selector
+        // 父Reactor 监听 通道的连接事件
+        // 子Reactor 负责传输事件的IO事件
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup(2);
         serverBootstrap.group(bossGroup, workerGroup);

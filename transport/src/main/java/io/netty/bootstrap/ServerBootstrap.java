@@ -153,6 +153,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             }
         }
 
+        // 每个channel会关联一条流水线 pipeLine
         ChannelPipeline p = channel.pipeline();
 
         final EventLoopGroup currentChildGroup = childGroup;
@@ -166,6 +167,9 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
             currentChildAttrs = childAttrs.entrySet().toArray(newAttrArray(childAttrs.size()));
         }
 
+        /**
+         * 父通道流水线添加ServerBootstrapAcceptor handler 处理通道连接事件
+         */
         p.addLast(new ChannelInitializer<Channel>() {
             @Override
             public void initChannel(Channel ch) throws Exception {
@@ -213,6 +217,9 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         return new Entry[size];
     }
 
+    /**
+     * 有通道建立连接时 会经过HeadContext->再到ServerBootstrapAcceptor进行处理
+     */
     private static class ServerBootstrapAcceptor extends ChannelInboundHandlerAdapter {
 
         private final EventLoopGroup childGroup;
@@ -232,6 +239,9 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
         @Override
         @SuppressWarnings("unchecked")
         public void channelRead(ChannelHandlerContext ctx, Object msg) {
+            // io.netty.channel.nio.NioEventLoop.processSelectedKey 事件轮询，调用pipeLine.fireChannelRead,将OP_READ和OP_ACCEPT都处理了
+            // 上一站是HeadContext channelRead
+            // 收到channel连接事件，底层将Channel也当前msg入站事件来处理了
             final Channel child = (Channel) msg;
 
             child.pipeline().addLast(childHandler);
@@ -250,6 +260,7 @@ public class ServerBootstrap extends AbstractBootstrap<ServerBootstrap, ServerCh
                 child.attr((AttributeKey<Object>) e.getKey()).set(e.getValue());
             }
 
+            // 子通道注册到反应堆上，监听IO传输事件
             try {
                 childGroup.register(child).addListener(new ChannelFutureListener() {
                     @Override

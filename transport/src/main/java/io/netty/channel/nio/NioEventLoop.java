@@ -149,6 +149,10 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         selectStrategy = strategy;
     }
 
+    /**
+     * 使用SelectorProvider创建一个NIO中的Selector
+     * @return
+     */
     private Selector openSelector() {
         final Selector selector;
         try {

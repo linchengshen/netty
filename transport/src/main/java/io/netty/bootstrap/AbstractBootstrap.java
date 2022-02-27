@@ -277,6 +277,11 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         return doBind(localAddress);
     }
 
+    /**
+     * 服务器通道真正处理绑定逻辑的方法入口
+     * @param localAddress
+     * @return
+     */
     private ChannelFuture doBind(final SocketAddress localAddress) {
         final ChannelFuture regFuture = initAndRegister();
         final Channel channel = regFuture.channel();
@@ -284,6 +289,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             return regFuture;
         }
 
+        // doBind0--> channel.bind-->ch.pipeLine.bind() 启动出站事件
         if (regFuture.isDone()) {
             // At this point we know that the registration was complete and successful.
             ChannelPromise promise = channel.newPromise();
@@ -316,6 +322,8 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
     final ChannelFuture initAndRegister() {
         Channel channel = null;
         try {
+            // AbstractBootstrap.channel()设置的父通道类型 的默认构造器
+            // 持有NIO java通道的实例且在selector上注册了OP_ACCEPT事件
             channel = channelFactory.newChannel();
             init(channel);
         } catch (Throwable t) {
@@ -327,7 +335,9 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
             return new DefaultChannelPromise(channel, GlobalEventExecutor.INSTANCE).setFailure(t);
         }
 
+        // 将channel 注册到selector上
         ChannelFuture regFuture = config().group().register(channel);
+        // 注册失败 关闭通道
         if (regFuture.cause() != null) {
             if (channel.isRegistered()) {
                 channel.close();
