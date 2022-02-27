@@ -38,12 +38,14 @@ public interface EventExecutor extends EventExecutorGroup {
     /**
      * Calls {@link #inEventLoop(Thread)} with {@link Thread#currentThread()} as argument
      */
+    // 判断当前线程是否是Reactor线程
     boolean inEventLoop();
 
     /**
      * Return {@code true} if the given {@link Thread} is executed in the event loop,
      * {@code false} otherwise.
      */
+    // 判断指定的线程是否是Reactor线程
     boolean inEventLoop(Thread thread);
 
     /**

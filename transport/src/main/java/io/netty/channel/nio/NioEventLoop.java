@@ -487,6 +487,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         }
     }
 
+    // 处理io事件
     private void processSelectedKeys() {
         if (selectedKeys != null) {
             processSelectedKeysOptimized(selectedKeys.flip());
@@ -533,6 +534,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
         Iterator<SelectionKey> i = selectedKeys.iterator();
         for (;;) {
             final SelectionKey k = i.next();
+            // io.netty.channel.nio.AbstractNioChannel.doRegister 绑定了channel的 attachment
             final Object a = k.attachment();
             i.remove();
 
@@ -644,7 +646,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             }
 
             // Process OP_WRITE first as we may be able to write some queued buffers and so free memory.
-            if ((readyOps & SelectionKey.OP_WRITE) != 0) {
+            if ((readyOps & SelectionKey.OP_WRITE) != 0) { // 通道等待写入，发送队列中的数据？
                 // Call forceFlush which will also take care of clear the OP_WRITE once there is nothing left to write
                 ch.unsafe().forceFlush();
             }
@@ -652,6 +654,8 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             // Also check for readOps of 0 to workaround possible JDK bug which may otherwise lead
             // to a spin loop
             if ((readyOps & (SelectionKey.OP_READ | SelectionKey.OP_ACCEPT)) != 0 || readyOps == 0) {
+                // 处理通道读取数据事件
+                // io.netty.channel.AbstractChannel.newUnsafe中得到的Unsafe
                 unsafe.read();
                 if (!ch.isOpen()) {
                     // Connection already closed - no need to handle write.
@@ -796,7 +800,8 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                     logger.warn(
                             "Selector.select() returned prematurely {} times in a row; rebuilding Selector {}.",
                             selectCnt, selector);
-
+                    // 解决NIO空轮询的bug
+                    // 默认超过512次就重建Selector?
                     rebuildSelector();
                     selector = this.selector;
 

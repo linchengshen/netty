@@ -102,6 +102,7 @@ public abstract class AbstractNioByteChannel extends AbstractNioChannel {
             }
         }
 
+        // 读取通道数据
         @Override
         public final void read() {
             final ChannelConfig config = config();

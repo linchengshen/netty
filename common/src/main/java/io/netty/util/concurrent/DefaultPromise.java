@@ -232,6 +232,11 @@ public class DefaultPromise<V> extends AbstractFuture<V> implements Promise<V> {
 
         checkDeadLock();
 
+        /**
+         * Future的实现，就是线程之间的通信，
+         * wait：释放同步监视器锁，线程放入到同步监视器的等待队列
+         * notifyAll:将所有的同步监视器的等待队列线程转移到就绪队列，重新竞争锁
+         */
         synchronized (this) {
             while (!isDone()) {
                 incWaiters();
